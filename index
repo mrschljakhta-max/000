@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Private Chat</title>
+
+<style>
+body {
+  margin:0;
+  font-family: Arial;
+  background:#0b0b14;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+/* MENU */
+.menu {
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+.menu button {
+  padding:15px;
+  border:none;
+  background:#1a1a2e;
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+  border-radius:10px;
+}
+
+.menu button:hover {
+  background:#7b2ff7;
+}
+
+/* CHAT */
+.chat {
+  width:400px;
+  height:600px;
+  background:#111122;
+  border-radius:15px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+.messages {
+  flex:1;
+  padding:15px;
+  overflow-y:auto;
+}
+
+.msg {
+  margin-bottom:10px;
+}
+
+.bot { color:#b18cff; }
+.user { color:#ffffff; text-align:right; }
+
+.choices {
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.choices button {
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  background:#222244;
+  color:white;
+}
+
+.choices button:hover {
+  background:#7b2ff7;
+}
+
+/* BONUS */
+.bonus {
+  display:none;
+  text-align:center;
+}
+
+.bonus img {
+  width:300px;
+  border-radius:15px;
+}
+</style>
+
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+
+const app = document.getElementById("app");
+
+let step = 0;
+let character = "";
+
+// ---- DATA ----
+const characters = {
+  "60+": "https://i.imgur.com/8Km9tLL.jpg",
+  "curvy": "https://i.imgur.com/3QdZ6.jpg",
+  "trans": "https://i.imgur.com/FakeImg.jpg"
+};
+
+const botLines = [
+  "Ти тут вперше?",
+  "Чому обрав саме мене?",
+  "Ти завжди такий прямий?",
+  "Мені цікаво, що ти шукаєш",
+  "Ти виглядаєш впертим",
+  "Не люблю поспіх",
+  "Ти вмієш чекати?",
+  "Це вже краще...",
+  "Ти починаєш мені подобатись",
+  "Продовжуй",
+  "Цікаво...",
+  "Ти не такий простий",
+  "Мені подобається твій стиль",
+  "Ще трохи",
+  "Не зупиняйся",
+  "Ти вже близько",
+  "Мені комфортно з тобою",
+  "Ти змінив мою думку",
+  "Я відкриваюсь",
+  "Гаразд... ти це заслужив"
+];
+
+const userChoices = [
+  ["Спокійно відповісти", "Жартувати", "Бути напористим"],
+  ["Чесно", "Ухильно", "Флірт"],
+  ["Так", "Ні", "Можливо"]
+];
+
+// ---- MENU ----
+function showMenu() {
+  app.innerHTML = `
+    <div class="menu">
+      <button onclick="start('60+')">Жінка 60+</button>
+      <button onclick="start('curvy')">Дівчина з формами</button>
+      <button onclick="start('trans')">Транс</button>
+    </div>
+  `;
+}
+
+// ---- START ----
+function start(type) {
+  character = type;
+  step = 0;
+
+  app.innerHTML = `
+    <div class="chat">
+      <div class="messages" id="messages"></div>
+      <div class="choices" id="choices"></div>
+    </div>
+  `;
+
+  nextStep();
+}
+
+// ---- STEP ----
+function nextStep() {
+  const messages = document.getElementById("messages");
+  const choicesDiv = document.getElementById("choices");
+
+  // BOT MESSAGE
+  const botMsg = document.createElement("div");
+  botMsg.className = "msg bot";
+  botMsg.innerText = botLines[step];
+  messages.appendChild(botMsg);
+
+  choicesDiv.innerHTML = "";
+
+  if (step >= 19) {
+    showBonus();
+    return;
+  }
+
+  userChoices[step % 3].forEach(choice => {
+    const btn = document.createElement("button");
+    btn.innerText = choice;
+
+    btn.onclick = () => {
+      const userMsg = document.createElement("div");
+      userMsg.className = "msg user";
+      userMsg.innerText = choice;
+      messages.appendChild(userMsg);
+
+      step++;
+      setTimeout(nextStep, 500);
+    };
+
+    choicesDiv.appendChild(btn);
+  });
+}
+
+// ---- BONUS ----
+function showBonus() {
+  app.innerHTML = `
+    <div class="bonus">
+      <h2>Бонус</h2>
+      <img src="${characters[character]}">
+      <br><br>
+      <button onclick="showMenu()">Назад</button>
+    </div>
+  `;
+  document.querySelector(".bonus").style.display = "block";
+}
+
+// INIT
+showMenu();
+
+</script>
+
+</body>
+</html>
